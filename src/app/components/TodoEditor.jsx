@@ -1,25 +1,24 @@
 'use client';
-// 할 일 추가
 
 import classNames from 'classnames';
 import React, { useRef, useState } from 'react';
 import { IoCloseCircle } from 'react-icons/io5';
+import { useTodo } from '@/contexts/TodoContext';
+import { useTheme } from '@/contexts/ThemeContext';
 
-const TodoEditor = ({ addTodo }) => {
+const TodoEditor = () => {
     const [task, setTask] = useState('');
-    // inputRef 변수가 useRef()를 통해 생성된 객체를 참조하도록 설정
     const inputRef = useRef();
+    const { addTodo } = useTodo();
+    const theme = useTheme();
 
     const onChangeTask = (e) => {
         setTask(e.target.value);
     };
     const onSubmit = () => {
-        // 빈 입력 방지
         if (!task) return;
 
-        // 할 일 추가
         addTodo(task);
-        // 입력창 초기화 및 포커스
         setTask('');
         inputRef.current.focus();
     };
@@ -41,26 +40,28 @@ const TodoEditor = ({ addTodo }) => {
         <div>
             <h2>새로운 Todo 작성하기</h2>
             <div>
-                <form onSubmit={onSubmit}>
-                    <input
-                        type='text'
-                        value={task}
-                        ref={inputRef}
-                        onChange={onChangeTask}
-                        onKeyDown={onkeydown}
-                        placeholder='할 일을 입력하세요.'
-                        className='p-3 text-black border rounded'
-                    />
-                    <button
-                        disabled={!task}
-                        onClick={onCloseKey}
-                        className={classNames(
-                            'absolute top-1 right-1 w-10 h-10  flex justify-center items-center',
-                            task ? 'text-black' : 'text-gray'
-                        )}
-                    >
-                        <IoCloseCircle />
-                    </button>
+                <form className='flex'>
+                    <div className='relative flex-1'>
+                        <input
+                            type='text'
+                            value={task}
+                            ref={inputRef}
+                            onKeyDown={onKeyDown}
+                            onChange={onChangeTask}
+                            placeholder='할 일을 입력하세요.'
+                            className={classNames('p-3 w-full ', `text-${theme.white} bg-${theme.black}`)}
+                        />
+                        <button
+                            disabled={!task}
+                            onClick={onCloseKey}
+                            className={classNames(
+                                'absolute top-1 right-1 w-10 h-10  flex justify-center items-center',
+                                task ? 'text-black' : 'text-gray'
+                            )}
+                        >
+                            <IoCloseCircle />
+                        </button>
+                    </div>
                     <button
                         type='submit'
                         onClick={onSubmit}

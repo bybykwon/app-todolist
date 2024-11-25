@@ -1,15 +1,15 @@
-//검색에 따라 필터링된 할 일 목록 표시
-
 import React, { useState } from 'react';
 import TodoItem from './TodoItem';
-import mockTodoData from './Todo';
+import { set } from 'date-fns';
+import { useTodo } from '@/contexts/TodoContext';
 
 const TodoList = () => {
     const [search, setSearch] = useState('');
+    const { onUpdate, onDelete, todos } = useTodo();
 
-    const filteredTodos = Array.isArray(mockTodoData)
-        ? mockTodoData.filter((item) => item.task.toLowerCase().includes(search.toLowerCase()))
-        : [];
+    const filteredTodos = () => {
+        return todos.filter((item) => item.task.toLowerCase().includes(search.toLowerCase()));
+    };
 
     return (
         <div>
@@ -23,20 +23,21 @@ const TodoList = () => {
                 placeholder='검색어를 입력하세요.'
                 className='p-3 text-black w-full'
             />
-            {filteredTodos.length > 0 ? (
-                <ul>
-                    {filteredTodos.map((item) => (
-                        <TodoItem
-                            key={item.id}
-                            isDone={item.isDone}
-                            task={item.task}
-                            createDate={item.createDate}
-                        />
-                    ))}
-                </ul>
-            ) : (
-                <p>일치하는 항목이 없습니다.</p>
-            )}
+            <ul className='mt-5 flex flex-col gap-2 divide-y'>
+                {filteredTodos().map(
+                    (item) => (
+                        console.log(item),
+                        (
+                            <TodoItem
+                                key={item.id}
+                                {...item}
+                                onUpdate={onUpdate}
+                                onDelete={onDelete}
+                            />
+                        )
+                    )
+                )}
+            </ul>
         </div>
     );
 };
